@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyGwMine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #0b1120;
+            --card-bg: rgba(15, 23, 42, 0.5);
+            --border: rgba(99, 102, 241, 0.12);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% -10%, rgba(99, 102, 241, 0.08), transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-size: 14px; /* Ukuran dasar lebih kecil */
+        }
+
+        /* --- NAVBAR COMPACT --- */
+        nav {
+            padding: 12px 6%;
+            display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100; background: rgba(11, 17, 32, 0.8);
+        }
+
+        .logo { font-weight: 800; font-size: 1.2rem; letter-spacing: 0.5px; }
+        .logo span { color: var(--primary); }
+
+        .btn-trigger {
+            background: var(--primary); color: white; border: none; padding: 8px 18px;
+            border-radius: 10px; font-weight: 700; cursor: pointer;
+            transition: 0.4s var(--ease); font-size: 0.85rem;
+        }
+
+        .btn-trigger:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); }
+
+        /* --- HEADER COMPACT --- */
+        .header-top {
+            padding: 25px 6% 15px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .digital-clock {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.4rem; /* Jauh lebih kecil */
+            color: var(--primary);
+            opacity: 0.9;
+        }
+
+        /* --- GRID COMPACT --- */
+        .main-container { padding: 10px 6% 60px; }
+        .schedule-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;
+        }
+
+        .day-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 18px;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            animation: slideUpFade 0.8s var(--ease) forwards;
+            transition: 0.4s var(--ease);
+        }
+
+        .day-card:hover { border-color: var(--primary); background: rgba(15, 23, 42, 0.8); }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .day-title {
+            font-weight: 800; font-size: 0.9rem; margin-bottom: 15px; 
+            color: var(--primary); letter-spacing: 1px; text-transform: uppercase;
+        }
+
+        /* --- LIST COMPACT --- */
+        .schedule-item {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 10px 14px; border-radius: 12px;
+            margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .item-info b { font-size: 0.9rem; display: block; }
+        .item-info span { font-size: 0.75rem; color: var(--text-dim); }
+
+        /* --- SIDE PANEL COMPACT --- */
+        #sidePanel {
+            position: fixed; top: 0; right: -360px; width: 340px; height: 100vh;
+            background: #0f172a; z-index: 1000; padding: 30px;
+            border-left: 1px solid var(--primary); transition: 0.6s var(--ease);
+        }
+        #sidePanel.active { right: 0; }
+
+        .btn-back {
+            background: none; border: 1px solid var(--border); color: var(--text-dim);
+            padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; margin-bottom: 20px;
+        }
+
+        input, select { 
+            width: 100%; padding: 12px; background: rgba(255,255,255,0.03); 
+            border: 1px solid var(--border); border-radius: 10px; color: white; 
+            margin: 8px 0 16px; outline: none; font-size: 0.85rem;
+        }
+
+        .music-toggle { position: fixed; bottom: 25px; right: 25px; background: var(--card-bg); border: 1px solid var(--border); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; transition: 0.3s; }
+        
+        .bug-mode { animation: glitch 0.1s infinite; filter: invert(1); }
+        @keyframes glitch { 0%{transform: translate(0)} 50%{transform: translate(-2px, 2px)} 100%{transform: translate(2px, -2px)} }
+    </style>
+</head>
+<body id="mainBody">
+
+    <audio id="bgMusic" loop><source src="musi.mp3" type="audio/mpeg"></audio>
+
+    <nav>
+        <div class="logo">Jadwal.</span></div>
+        <button class="btn-trigger" onclick="togglePanel(true)">+ Add MY Jadwal😝</button>
+    </nav>
+
+    <div class="header-top">
+        <div>
+            <h2 id="greeting" style="font-weight: 800; font-size: 1.3rem;"></h2>
+            <p style="color: var(--primary); font-weight: 600; font-size: 0.7rem; letter-spacing: 1px;">K6 | DASHBOARD</p>
+        </div>
+        <div class="digital-clock" id="clock">00:00:00</div>
+    </div>
+
+    <div class="main-container">
+        <div class="schedule-grid" id="mainGrid"></div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="togglePanel(false)" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; z-index:900; backdrop-filter:blur(4px);"></div>
+
+    <div id="sidePanel">
+        <button class="btn-back" onclick="togglePanel(false)">← Kembali</button>
+        <h3 id="panelTitle" style="margin-bottom: 20px;">Sesi Baru</h3>
+        
+        <label style="font-size:0.65rem; color:var(--primary); font-weight:800;">HARI</label>
+        <select id="hari">
+            <option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option>
+        </select>
+
+        <label style="font-size:0.65rem; color:var(--primary); font-weight:800;">MAPEL</label>
+        <input type="text" id="mapelInput" placeholder="Nama mapel..." oninput="checkAbuse(this)">
+
+        <label style="font-size:0.65rem; color:var(--primary); font-weight:800;">WAKTU</label>
+        <input type="text" id="jamInput" placeholder="08.00 - 10.00" oninput="validateTime(this)">
+
+        <button class="btn-trigger" style="width:100%; padding: 14px;" onclick="saveData()">Simpan</button>
+    </div>
+
+    <div class="music-toggle" onclick="toggleMusic()">
+        <i id="musicIcon" class="fa-solid fa-play" style="font-size: 0.9rem; color: var(--primary);"></i>
+    </div>
+
+    <script>
+        function updateClock() {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB');
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        const badWords = ["anjing", "babi", "tolol", "goblok", "bangsat", "kontol", "memek", "anjay", "anjim", "bgsd", "kntl", "mmk", "asu"];
+        function checkAbuse(input) {
+            if (badWords.some(word => input.value.toLowerCase().includes(word))) {
+                triggerGlitch("SOpAN DIkIt👿😡");
+                input.value = "";
+            }
+        }
+
+        function triggerGlitch(msg) {
+            document.getElementById('mainBody').classList.add('bug-mode');
+            document.getElementById('panelTitle').innerText = msg;
+            setTimeout(() => {
+                document.getElementById('mainBody').classList.remove('bug-mode');
+                document.getElementById('panelTitle').innerText = "Sesi Baru";
+            }, 800);
+        }
+
+        function validateTime(i) {
+            if(!/^[0-9.:\-\s—]*$/.test(i.value)) { triggerGlitch("KOCaKLuhKoCak"); i.value = i.value.replace(/[^0-9.:\-\s—]/g, ''); }
+        }
+
+        let db = JSON.parse(localStorage.getItem('db_v5')) || {"Senin":[], "Selasa":[], "Rabu":[], "Kamis":[], "Jumat":[]};
+
+        function saveData() {
+            const h = document.getElementById('hari').value, m = document.getElementById('mapelInput').value, j = document.getElementById('jamInput').value;
+            if(!m || !j) return;
+            db[h].push({ id: Date.now(), mapel: m, jam: j });
+            localStorage.setItem('db_v5', JSON.stringify(db));
+            render(); togglePanel(false);
+            document.getElementById('mapelInput').value = ""; document.getElementById('jamInput').value = "";
+        }
+
+        function render() {
+            const grid = document.getElementById('mainGrid');
+            grid.innerHTML = "";
+            Object.keys(db).forEach((hari, index) => {
+                let items = db[hari].map(it => `
+                    <div class="schedule-item">
+                        <div class="item-info"><b>${it.mapel}</b><span>${it.jam}</span></div>
+                        <i class="fa-solid fa-trash" style="color:#ff4757; cursor:pointer; font-size:0.8rem" onclick="remove('${hari}', ${it.id})"></i>
+                    </div>
+                `).join('');
+                grid.innerHTML += `
+                    <div class="day-card" style="animation-delay: ${index * 0.1}s">
+                        <div class="day-title">${hari}</div>
+                        ${items || '<p style="color:var(--text-dim); font-size:0.7rem;">Kosong</p>'}
+                    </div>`;
+            });
+        }
+
+        function remove(h, id) {
+            db[h] = db[h].filter(x => x.id !== id);
+            localStorage.setItem('db_v5', JSON.stringify(db));
+            render();
+        }
+
+        function togglePanel(s) {
+            document.getElementById('sidePanel').classList.toggle('active', s);
+            document.getElementById('overlay').style.display = s ? 'block' : 'none';
+        }
+
+        function toggleMusic() {
+            const m = document.getElementById('bgMusic'), icon = document.getElementById('musicIcon');
+            if(m.paused) { m.play(); icon.className = "fa-solid fa-pause"; }
+            else { m.pause(); icon.className = "fa-solid fa-play"; }
+        }
+
+        const hrs = new Date().getHours();
+        document.getElementById('greeting').innerText = hrs < 12 ? "Morning!" : hrs < 18 ? "Afternoon!" : "Evening!";
+        render();
+    </script>
+</body>
+</html>
